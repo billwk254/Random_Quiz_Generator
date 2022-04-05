@@ -1,4 +1,5 @@
 import random
+import os
 
 capitals = {'Alabama': 'Montgomery', 'Alaska': 'Juneau', 'Arizona': 'Phoenix',
 'Arkansas': 'Little Rock', 'California': 'Sacramento', 'Colorado': 'Denver',
@@ -16,10 +17,18 @@ capitals = {'Alabama': 'Montgomery', 'Alaska': 'Juneau', 'Arizona': 'Phoenix',
 'Nashville', 'Texas': 'Austin', 'Utah': 'Salt Lake City', 'Vermont':
 'Montpelier', 'Virginia': 'Richmond', 'Washington': 'Olympia', 'West Virginia': 'Charleston', 'Wisconsin': 'Madison', 'Wyoming': 'Cheyenne'}
 
+#creates a new folder for putting in all our files in if it does not exist
+
+if os.path.exists("C:\\Users\\billk\\Desktop\\us_state_capitals_quiz"):
+    pass
+else:
+    os.makedirs("C:\\Users\\billk\\Desktop\\us_state_capitals_quiz\\question_sheets")
+    os.makedirs("C:\\Users\\billk\\Desktop\\us_state_capitals_quiz\\answer_sheets")
+
 for quiznum in range(35):
     # create the quiz and answer key files
-    quizfile = open("capitalsquiz%s.txt" % (quiznum + 1), "w")
-    answerkeyfile = open("capitalsquiz_answers%s.txt" % (quiznum + 1), "w")
+    quizfile = open("C:\\Users\\billk\\Desktop\\us_state_capitals_quiz\\question_sheets\\capitalsquiz%s.txt" % (quiznum + 1), "w")
+    answerkeyfile = open("C:\\Users\\billk\\Desktop\\us_state_capitals_quiz\\answer_sheets\\capitalsquiz_answers%s.txt" % (quiznum + 1), "w")
 
     #write out the header for the quiz
     quizfile.write("Name:\n\nDate:\n\nClass\n\n")
