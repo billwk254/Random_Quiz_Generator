@@ -1,6 +1,7 @@
 import random
 import os
-
+from countries_and_capitals_generator import country_capitals as capitals
+"""
 capitals = {'Alabama': 'Montgomery', 'Alaska': 'Juneau', 'Arizona': 'Phoenix',
 'Arkansas': 'Little Rock', 'California': 'Sacramento', 'Colorado': 'Denver',
 'Connecticut': 'Hartford', 'Delaware': 'Dover', 'Florida': 'Tallahassee',
@@ -16,6 +17,8 @@ capitals = {'Alabama': 'Montgomery', 'Alaska': 'Juneau', 'Arizona': 'Phoenix',
 'South Carolina': 'Columbia', 'South Dakota': 'Pierre', 'Tennessee':
 'Nashville', 'Texas': 'Austin', 'Utah': 'Salt Lake City', 'Vermont':
 'Montpelier', 'Virginia': 'Richmond', 'Washington': 'Olympia', 'West Virginia': 'Charleston', 'Wisconsin': 'Madison', 'Wyoming': 'Cheyenne'}
+
+"""
 
 #creates a new folder for putting in all our files in if it does not exist
 
@@ -36,12 +39,12 @@ for quiznum in range(35):
     quizfile.write("\n\n")
 
     #Shuffle the order of the states
-    states = list(capitals.keys())
-    random.shuffle(states)
+    countries = list(capitals.keys())
+    random.shuffle(countries)
 
     #get right and wrong answers
-    for questionnum in range(50):
-        correctanswer = capitals[states[questionnum]]
+    for questionnum in range(193):
+        correctanswer = capitals[countries[questionnum]]
         wronganswer = list(capitals.values())
         del wronganswer[wronganswer.index(correctanswer)]
         wronganswer = random.sample(wronganswer, 3)
@@ -50,7 +53,7 @@ for quiznum in range(35):
 
         #write the question and the answer options to the quiz file
 
-        quizfile.write("%s.What is the capital of %s?\n" % (questionnum + 1, states[questionnum]))
+        quizfile.write("%s.What is the capital of %s?\n" % (questionnum + 1, countries[questionnum]))
         for i in range(4):
             quizfile.write("  %s.%s\n" % ("ABCD"[i], answeroptions[i]))
         quizfile.write("\n")
