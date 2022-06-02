@@ -1,9 +1,11 @@
 import countryinfo
+import shutil
 
 country_capitals2 = {}
 
-# a function to generate a dictionary with the countries name and capital city filtered out by the continent specified by the user
 def continentselector():
+    """a function to generate a dictionary with the countries name and capital city
+     filtered out by the continent specified by the user"""
     while True:
         user_continent = input("Please enter a continent to get the countries: \n".strip())
         if user_continent:
@@ -22,3 +24,8 @@ def continentselector():
 #group the two lists above to create a dictionary with information on countries name and capital
     for i in range(0, len(countries_continents)):
         country_capitals2[countries_continents[i]] = ccapitals_continents[i]
+
+def delete_previous(location):
+    """A simple function to deleted any provided folder location"""
+    shutil.rmtree(location, ignore_errors= True, onerror=None)
+

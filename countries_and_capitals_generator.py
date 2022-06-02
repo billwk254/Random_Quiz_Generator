@@ -8,7 +8,6 @@ capitals = [d['capital']for d in countryinfo]
 #Get a list of countries from the countryinfo.py file
 countrynames = [z["name"] for z in countryinfo]
 
-
 #Generate  a dictionary of values from the two lists generated above
 
 country_capitals = {}

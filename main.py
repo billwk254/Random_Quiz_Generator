@@ -4,6 +4,7 @@ import os
 from countries_and_capitals_generator import country_capitals
 from generate_by_continents import continentselector
 from generate_by_continents import country_capitals2
+from generate_by_continents import delete_previous
 import re
 
 #a dictionary with states in the US and their state capitals
@@ -29,8 +30,8 @@ capitals = {'Alabama': 'Montgomery', 'Alaska': 'Juneau', 'Arizona': 'Phoenix',
 questionfileregex = re.compile(r"(capitalsquiz)(\d?\d)")
 answerfileregex =  re.compile(r"(capitalsquiz_answers)(\d?\d)")
 
-# a function to let the user input the number of students being tested
 def num_of_students():
+    """A function that asks the user to input how many students are being tested"""
     global studentnum
     while True:
         studentnum = int(input("How many students are you planning to test: \n"))
@@ -39,14 +40,15 @@ def num_of_students():
 
 num_of_students()
 
-#creates a new folder for putting in all our files in if it does not exist
 def userpath():
+    """creates a new folder for putting in all our files in if it does not exist"""
     global questionfolder, answerfolder,userpath
     while True:
         userpath = os.path.abspath(input("Please enter a path to use to store the files: \n"))
-        if os.path.isdir(userpath) and not os.path.exists(userpath):
-            questionfolder = os.path.join(userpath,"world_capitals_quiz\\question_sheets\\")
-            answerfolder = os.path.join(userpath,"world_capitals_quiz\\answer_sheets\\")
+        userpath = os.path.join(userpath,"world_capitals_quiz")
+        if not os.path.exists(userpath):
+            questionfolder = os.path.join(userpath,"question_sheets\\")
+            answerfolder = os.path.join(userpath,"answer_sheets\\")
             os.makedirs(questionfolder)
             os.makedirs(answerfolder)
             break
@@ -61,8 +63,8 @@ userpath()
 excessquestionfiles = []
 excessanswerfiles = []
 
-#a function which lets the user select a specific continent to draw the quiz from or generate a quiz with all countries
 def quiz_type():
+    """a function which lets the user select a specific continent to draw the quiz from or generate a quiz with all countries"""
     while True:
         global capitals
         user_select =  input("Do you want to generate a quiz for a specific continent(C) or for all countries(A): \n")
@@ -82,12 +84,12 @@ quiz_type()
 
 for quiznum in range(studentnum):
     # create the quiz and answer key files
-    quizfile = open(f"{userpath}\\world_capitals_quiz\\question_sheets\\capitalsquiz%s.txt" % (quiznum + 1), "w")
-    answerkeyfile = open(f"{userpath}\\world_capitals_quiz\\answer_sheets\\capitalsquiz_answers%s.txt" % (quiznum + 1), "w")
+    quizfile = open(f"{userpath}\\question_sheets\\capitalsquiz%s.txt" % (quiznum + 1), "w")
+    answerkeyfile = open(f"{userpath}\\answer_sheets\\capitalsquiz_answers%s.txt" % (quiznum + 1), "w")
 
     #write out the header for the quiz
     quizfile.write("Name:\n\nDate:\n\nClass\n\n")
-    quizfile.write(('' * 20) + "State Capitals quiz (Form %s)" % (quiznum + 1))
+    quizfile.write(('' * 20) + "Capitals quiz (Form %s)" % (quiznum + 1))
     quizfile.write("\n\n")
 
     #Shuffle the order of the states
@@ -115,26 +117,86 @@ for quiznum in range(studentnum):
     quizfile.close()
     answerkeyfile.close()
 
-#function to delete all excess files found in the folders where the quiz and its answer files are being generated
 def delete_overflow():
-    for files in os.listdir(f"{userpath}\\world_capitals_quiz\\question_sheets"):
+    """function to delete all excess files found in the folders where the quiz and its answer files are being generated
+    from previous runs of the program"""
+
+    for files in os.listdir(f"{userpath}\\question_sheets"):
         if files.endswith(".txt"):
             exquestions = questionfileregex.search(files)
             if int(exquestions.group(2)) > studentnum:
                 excessquestionfiles.append(files)
-    for ofiles in os.listdir(f"{userpath}\\world_capitals_quiz\\answer_sheets\\"):
+    for ofiles in os.listdir(f"{userpath}\\answer_sheets\\"):
         if files.endswith(".txt"):
             exanswers = answerfileregex.search(ofiles)
             if int(exanswers.group(2)) > studentnum:
                 excessanswerfiles.append(ofiles)
     for exq in excessquestionfiles:
-        delfilelocation = os.path.join(f"{userpath}\\world_capitals_quiz\\question_sheets", exq)
+        delfilelocation = os.path.join(f"{userpath}\\question_sheets", exq)
         os.remove(delfilelocation)
     for exa in excessanswerfiles:
-        delfilelocation2 = os.path.join(f"{userpath}\\world_capitals_quiz\\answer_sheets\\", exa)
+        delfilelocation2 = os.path.join(f"{userpath}\\answer_sheets\\", exa)
         os.remove(delfilelocation2)
 
 delete_overflow()
+
+def check_location_numbering():
+    """A function that uses a regular expression to check the last location that the program
+    output the test files to"""
+    global locnumber, previouslocation, recheck,beforedir
+    recheck = re.compile(r"^(\d\d?\d?)(\W)(.*)$")
+    checkfolder = open("world_capitals_quiz.txt","r")
+    checkfiles = checkfolder.read()
+    flist = checkfiles.split("\n")
+    required = flist[-2]
+    numsearch = recheck.search(required)
+    if numsearch:
+        locnumber = int(numsearch.group(1))
+    else:
+        locnumber = 0
+    beforedir = numsearch.group(3)
+    checkfolder.close()
+
+check_location_numbering()
+
+def delete_last_folder_location():
+    """A function that asks the user to delete the last location the program output
+    the test files to if the user happens to change output locations"""
+    if len(os.listdir(f"{userpath}\\question_sheets")) == studentnum:
+        global folderpath
+        folderpath = os.path.abspath(f"{userpath}")
+        folderlocation = open(f"{os.path.basename(folderpath)}.txt","a")
+        count = locnumber
+        while True:
+            folderlocation.write("%s. %s\n"%(count + 1, folderpath))
+            break
+        folderlocation.close()
+        checkfolder = open("world_capitals_quiz.txt", "r")
+        checkfiles = checkfolder.read()
+        flist = checkfiles.split("\n")
+        required = flist[-2]
+        numsearch = recheck.search(required)
+        afterdir = numsearch.group(3)
+        if beforedir != afterdir:
+            while True:
+                deleteprompt = input(f"Do you want to delete the folder generated in the location {beforedir}(Y/N): \n")
+                if deleteprompt.lower() == "y":
+                    delete_previous(beforedir)
+                    print(f"The Folder {beforedir} has been permanently deleted")
+                    break
+                elif deleteprompt.lower() == "n":
+                    print("KEEPING THINGS IN THE SAME DIRECTORY I SEE, VERY SMART!")
+                    break
+                else:
+                    print("Please Enter Yes(Y) or No(N)")
+                    continue
+        else:
+            print("{0:>50}".format("KEEPING THINGS IN THE SAME DIRECTORY AVOIDS CONFUSION AND DECLUTTERS YOUR COMPUTER"))
+        checkfolder.close()
+
+
+
+delete_last_folder_location()
 
 print("THE TEST AND ANSWER FILES FOR " + str(studentnum) + f" STUDENTS HAS BEEN STORED TO THE FOLLOWING LOCATION \n\n ********{userpath}********* ")
 
